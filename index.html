@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CyberQuest – Cybersecurity Mastery Game</title>
+  <meta name="description" content="Master all 8 modules of cybersecurity through an interactive quiz game. Covers CIA triad, attacks, defense, identity, OS security, web security, and SSDLC." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ===== SPLASH SCREEN ===== -->
+<div id="splash-screen" class="screen active">
+  <div class="splash-bg"></div>
+  <div class="splash-content">
+    <div class="logo-glow">
+      <span class="logo-icon">🛡️</span>
+    </div>
+    <h1 class="splash-title">CyberQuest</h1>
+    <p class="splash-sub">Cybersecurity Mastery Challenge</p>
+    <p class="splash-desc">Master 8 modules · 60+ levels · All concepts tested</p>
+    <div class="module-grid-preview">
+      <div class="prev-mod">1</div>
+      <div class="prev-mod">2.1</div>
+      <div class="prev-mod">2.2</div>
+      <div class="prev-mod">3</div>
+      <div class="prev-mod">4</div>
+      <div class="prev-mod">5</div>
+      <div class="prev-mod">6</div>
+      <div class="prev-mod">7</div>
+    </div>
+    <button class="btn-primary" id="btn-start-game" onclick="showScreen('module-select')">
+      <span>Start Game</span>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+  <div class="particle-container" id="particles"></div>
+</div>
+
+<!-- ===== MODULE SELECT ===== -->
+<div id="module-select" class="screen">
+  <header class="top-bar">
+    <button class="btn-back" onclick="showScreen('splash-screen')">← Back</button>
+    <span class="top-title">Select Module</span>
+    <div class="score-badge" id="header-score">Total: 0 pts</div>
+  </header>
+  <div class="modules-container">
+    <h2 class="section-title">Choose Your Module</h2>
+    <div class="modules-grid" id="modules-grid"></div>
+  </div>
+</div>
+
+<!-- ===== LEVEL SELECT ===== -->
+<div id="level-select" class="screen">
+  <header class="top-bar">
+    <button class="btn-back" id="btn-back-levels" onclick="showScreen('module-select')">← Modules</button>
+    <span class="top-title" id="level-select-title">Select Level</span>
+    <div class="score-badge" id="header-score-2">Total: 0 pts</div>
+  </header>
+  <div class="levels-container">
+    <div class="module-hero" id="module-hero"></div>
+    <div class="levels-grid" id="levels-grid"></div>
+  </div>
+</div>
+
+<!-- ===== CONCEPT SCREEN ===== -->
+<div id="concept-screen" class="screen">
+  <header class="top-bar">
+    <button class="btn-back" onclick="exitToLevels()">← Exit</button>
+    <span class="top-title" id="concept-level-title">Concept</span>
+    <div class="lives-display" id="concept-lives">❤️❤️❤️</div>
+  </header>
+  <div class="concept-container">
+    <div class="concept-card" id="concept-card">
+      <div class="concept-tag">📚 CONCEPT</div>
+      <h2 class="concept-title" id="concept-title"></h2>
+      <div class="concept-body" id="concept-body"></div>
+      <button class="btn-primary" id="btn-proceed-to-questions" onclick="startQuestions()">
+        <span>Begin Questions</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== QUESTION SCREEN ===== -->
+<div id="question-screen" class="screen">
+  <header class="top-bar">
+    <button class="btn-back" onclick="confirmExit()">✕ Exit</button>
+    <div class="progress-header">
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="q-progress-bar"></div>
+      </div>
+      <span class="progress-label" id="q-progress-label">1/4</span>
+    </div>
+    <div class="lives-display" id="q-lives">❤️❤️❤️</div>
+  </header>
+  <div class="question-container">
+    <div class="question-card" id="question-card">
+      <div class="q-meta">
+        <span class="q-badge" id="q-module-badge">Module 1</span>
+        <span class="q-level-badge" id="q-level-badge">Level 1</span>
+      </div>
+      <div class="hint-box" id="hint-box" style="display:none"></div>
+      <p class="question-text" id="question-text"></p>
+      <div class="options-grid" id="options-grid"></div>
+      <div class="feedback-bar" id="feedback-bar" style="display:none"></div>
+      <div class="wrong-reason" id="wrong-reason" style="display:none"></div>
+      <div class="q-footer">
+        <button class="btn-hint" id="btn-hint" onclick="showHint()">💡 Hint</button>
+        <button class="btn-next" id="btn-next" onclick="nextQuestion()" style="display:none">Next →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LEVEL COMPLETE ===== -->
+<div id="level-complete" class="screen">
+  <div class="complete-container">
+    <div class="complete-card">
+      <div class="complete-icon" id="complete-icon">🏆</div>
+      <h2 id="complete-title">Level Complete!</h2>
+      <p id="complete-subtitle"></p>
+      <div class="stats-row" id="complete-stats"></div>
+      <div class="complete-buttons">
+        <button class="btn-secondary" onclick="exitToLevels()">Back to Levels</button>
+        <button class="btn-primary" id="btn-next-level" onclick="goNextLevel()">Next Level →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CONFIRM EXIT MODAL ===== -->
+<div id="exit-modal" class="modal-overlay" style="display:none">
+  <div class="modal-card">
+    <h3>Exit Level?</h3>
+    <p>Your progress in this level will be lost.</p>
+    <div class="modal-buttons">
+      <button class="btn-secondary" onclick="closeModal()">Continue Playing</button>
+      <button class="btn-danger" onclick="exitToLevels()">Exit</button>
+    </div>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
