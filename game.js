@@ -37,6 +37,37 @@ function updateLives() {
   });
 }
 
+function shuffleArray(array) {
+  const copy = array.slice();
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+function shuffleQuestion(question) {
+  const originalOrder = question.opts.map((_, index) => index);
+  const shuffledOrder = shuffleArray(originalOrder);
+  const shuffledOpts = shuffledOrder.map((index) => question.opts[index]);
+
+  const remappedWrongReasons = {};
+  Object.entries(question.wrongReasons || {}).forEach(([key, reason]) => {
+    const originalIndex = Number(key);
+    const newIndex = shuffledOrder.indexOf(originalIndex);
+    if (newIndex !== -1) {
+      remappedWrongReasons[newIndex] = reason;
+    }
+  });
+
+  return {
+    ...question,
+    opts: shuffledOpts,
+    correct: shuffledOrder.indexOf(question.correct),
+    wrongReasons: remappedWrongReasons,
+  };
+}
+
 function initModules() {
   const modulesGrid = document.getElementById('modules-grid');
   if (!modulesGrid) return;
@@ -157,7 +188,14 @@ function closeModal() {
 function startQuestions() {
   if (!state.currentLevel || !state.currentModule) return;
 
-  state.currentQuestions = state.currentLevel.questions.slice();
+  state.currentQuestions = state.currentLevel.questions.map((question) => {
+    const clonedQuestion = {
+      ...question,
+      opts: question.opts.slice(),
+      wrongReasons: { ...(question.wrongReasons || {}) },
+    };
+    return shuffleQuestion(clonedQuestion);
+  });
   state.currentQuestionIndex = 0;
   state.levelScore = 0;
   state.levelComplete = false;
