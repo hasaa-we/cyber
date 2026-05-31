@@ -145,7 +145,82 @@
   </div>
 </div>
 
+<!-- ===== CASE STUDIES ===== -->
+<div id="case-studies-screen" class="screen">
+  <header class="top-bar">
+    <button class="btn-back" onclick="showScreen('splash-screen')">← Back</button>
+    <span class="top-title">Case Studies</span>
+    <div class="score-badge" id="cs-score">0/7 Complete</div>
+  </header>
+  <div class="case-studies-container">
+    <h2 class="section-title">Real-World Cybersecurity Incidents</h2>
+    <p class="section-description">Analyze actual breach scenarios and learn from security failures</p>
+    <div class="case-studies-grid" id="case-studies-grid"></div>
+  </div>
+</div>
+
+<!-- ===== CASE STUDY DETAIL ===== -->
+<div id="case-study-detail" class="screen">
+  <header class="top-bar">
+    <button class="btn-back" onclick="backToCaseStudies()">← Back</button>
+    <span class="top-title" id="cs-detail-title">Case Study</span>
+    <div class="score-badge" id="cs-detail-score">0/10</div>
+  </header>
+  <div class="case-study-detail-container">
+    <div class="case-study-hero" id="case-study-hero"></div>
+    <div class="case-study-content" id="case-study-content"></div>
+  </div>
+</div>
+
+<!-- ===== CASE STUDY QUESTION ===== -->
+<div id="case-study-question-screen" class="screen">
+  <header class="top-bar">
+    <button class="btn-back" onclick="confirmExitCaseStudy()">✕ Exit</button>
+    <div class="progress-header">
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="cs-q-progress-bar"></div>
+      </div>
+      <span class="progress-label" id="cs-q-progress-label">1/10</span>
+    </div>
+    <div id="cs-q-score">0 pts</div>
+  </header>
+  <div class="question-container">
+    <div class="question-card" id="cs-question-card">
+      <div class="q-meta">
+        <span class="q-badge" id="cs-q-case-badge">Case Study 1</span>
+        <span class="q-level-badge" id="cs-q-num-badge">Question 1</span>
+      </div>
+      <p class="question-text" id="cs-question-text"></p>
+      <div class="options-grid" id="cs-options-grid"></div>
+      <div class="feedback-bar" id="cs-feedback-bar" style="display:none"></div>
+      <div class="wrong-reason" id="cs-wrong-reason" style="display:none"></div>
+      <div class="q-footer">
+        <button class="btn-hint" id="cs-btn-hint" onclick="showCaseStudyHint()">💡 Hint</button>
+        <button class="btn-next" id="cs-btn-next" onclick="nextCaseStudyQuestion()" style="display:none">Next →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CASE STUDY COMPLETE ===== -->
+<div id="case-study-complete" class="screen">
+  <div class="complete-container">
+    <div class="complete-card">
+      <div class="complete-icon" id="cs-complete-icon">✅</div>
+      <h2 id="cs-complete-title">Case Study Complete!</h2>
+      <p id="cs-complete-subtitle"></p>
+      <div class="stats-row" id="cs-complete-stats"></div>
+      <div class="complete-buttons">
+        <button class="btn-secondary" onclick="backToCaseStudies()">Back to Case Studies</button>
+        <button class="btn-primary" id="btn-next-case" onclick="goToNextCaseStudy()">Next Case Study →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="data.js"></script>
+<script src="case-studies.js"></script>
 <script src="game.js"></script>
+<script src="case-studies-game.js"></script>
 </body>
 </html>
