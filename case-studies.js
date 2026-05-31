@@ -176,7 +176,19 @@ The infrastructure includes:
           3: "No SQL injection vulnerability was exploited."
         },
         hint: "Track each step: how did they get in, escalate, and exfiltrate?",
-        explanationBefore: "Attack chains show how multiple vulnerabilities combine for impact."
+        explanationBefore: "Attack chains show how multiple vulnerabilities combine for impact.",
+        isOpenEnded: true,
+        answer: `1. Phishing Email: Employee receives convincing email from HR with malicious link
+2. Credential Harvest: Employee enters credentials on fake page, credentials are stolen
+3. VPN Access: Attacker logs in with stolen credentials from external location
+4. Network Enumeration: Attacker explores internal network resources
+5. Privilege Escalation: Attacker finds shared admin credentials in unsecured Excel file
+6. Lateral Movement: Uses shared account to access admin dashboard
+7. Data Access: Navigates to customer database from admin dashboard
+8. Data Export: Exports customer financial data to attacker-controlled system
+9. Encrypted Transfer: Transfers data over HTTPS to hide traffic from monitoring
+10. Dark Web Sale: Data appears on underground forum for sale
+Key insight: No malware, no exploits—just legitimate credentials used without authorization.`
       },
       {
         question: "Which of these trust assumptions should have been questioned by the credit union?",
@@ -196,8 +208,112 @@ The infrastructure includes:
         },
         hint: "Think about what assumptions each control and practice makes.",
         explanationBefore: "Security is most effective when dangerous assumptions are explicitly identified and addressed."
-      }
-    ]
+      },
+      {
+        question: "Which control would most directly prevent credential abuse from the shared service account?",
+        options: [
+          "Mandatory password rotation every 30 days",
+          "Privileged Access Management (PAM) with unique per-user credentials",
+          "Increased VPN bandwidth",
+          "Encryption at rest for the customer database"
+        ],
+        correct: 1,
+        wrongExplanations: {
+          0: "Password rotation alone does not prevent shared account misuse.",
+          2: "Bandwidth is unrelated to credential misuse.",
+          3: "Encryption protects stored data, but not account abuse."
+        },
+        hint: "What control prevents multiple people from sharing the same login?",
+        explanationBefore: "Shared accounts are risky because they eliminate user-specific accountability."
+      },
+      {
+        question: "Open-ended: Identify the four key security gaps in this breach and explain why each enabled the attack.",
+        options: [
+          "No MFA, shared accounts, weak monitoring, phishing vulnerability",
+          "Poor encryption, missing antivirus, unpatched servers, weak passwords",
+          "No backups, disabled firewall, public cloud buckets, insecure email",
+          "Outdated browser, weak VPN, disabled logging, insecure physical access"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Encryption and antivirus were not the primary failures here.",
+          2: "This case did not involve cloud buckets or backup failures.",
+          3: "Physical access was not the main issue."
+        },
+        hint: "Focus on credentials, accounts, monitoring, and phishing.",
+        explanationBefore: "This attack combined social engineering with weak account controls and poor visibility.",
+        isOpenEnded: true,
+        answer: `1. Missing MFA on VPN and admin access: allowed stolen credentials to work without a second factor.
+2. Shared service account use: enabled lateral movement without unique accountability.
+3. Weak monitoring and alerting: legitimate-seeming logins were not flagged.
+4. Successful phishing: the attacker obtained valid credentials without malware, making detection harder.`
+      },
+      {
+        question: "Open-ended: Explain why no malware was needed in this breach and why that changes how defenders should respond.",
+        options: [
+          "Because the attacker used valid credentials, traditional malware detection would not help",
+          "Because the network was not encrypted",
+          "Because the attacker only used external scanning tools",
+          "Because the email system was insecure"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Encryption is unrelated to the lack of malware.",
+          2: "The attacker did not exploit a vulnerability using scanners.",
+          3: "Email insecurity was the entry point, but not the reason malware was unnecessary."
+        },
+        hint: "What happens when attackers use legitimate credentials instead of malware?",
+        explanationBefore: "Credential-based attacks often look like normal access, so defenders need behavioral and identity-aware controls.",
+        isOpenEnded: true,
+        answer: `Because the attacker had valid VPN credentials, the traffic appeared normal to many security tools. This means:
+1. Traditional antivirus/IDS may not see anything malicious.
+2. Detection must rely on anomalies in user behavior.
+3. The response should include credential revocation and stronger authentication.
+4. It underscores the need for identity protection, not just endpoint protection.`
+      },
+      {
+        question: "Open-ended: Propose a phased remediation plan to secure the VPN, shared accounts, and monitoring.",
+        options: [
+          "Immediately enforce MFA on VPN, remove shared accounts, add monitoring, then review policies",
+          "Install antivirus on all servers, change all passwords, disable VPN, then hire consultants",
+          "Replace the VPN appliance, move all services to the cloud, then audit logs",
+          "Block remote access, force password changes monthly, then set up backups"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Antivirus alone won't fix the fundamental identity and account problems.",
+          2: "A full replacement is not necessary before improving controls.",
+          3: "Blocking remote access is impractical for business operations."
+        },
+        hint: "Think about high-priority remediation first, then process improvements.",
+        explanationBefore: "Effective remediation should start with the highest-risk, easiest-to-fix controls.",
+        isOpenEnded: true,
+        answer: `1. Immediate: Enforce MFA for VPN and administrative access, revoke compromised credentials, and rotate shared account passwords.
+2. Short term: Replace shared service accounts with unique PAM-managed credentials, restrict service access, and enforce account audit trails.
+3. Mid term: Deploy user behavior analytics and anomaly detection to flag unusual access patterns.
+4. Long term: Update security policies, train staff on phishing, and test incident response procedures.`
+      },
+      {
+        question: "Open-ended: Assess the likely customer impact and what the credit union should disclose to regulators and members.",
+        options: [
+          "Customer financial data exposure could lead to fraud, identity theft, regulatory fines, and reputational damage",
+          "Only the employee account was affected, so no customer notification is needed",
+          "The breach is minor because no malware was installed",
+          "Customers should be told to change their email passwords"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "The customer data export is the core impact, not just the employee account.",
+          2: "The data exposure is significant even without malware.",
+          3: "Malware presence is irrelevant to the privacy and fraud risk.",
+          4: "Email passwords are not the main concern; account and identity monitoring are."
+        },
+        hint: "Consider what data was exported and how it could be used.",
+        explanationBefore: "Regulatory disclosure depends on the sensitivity and extent of data exposed.",
+        isOpenEnded: true,
+        answer: `The employee's credentials enabled export of customer financial data, which could lead to identity theft, fraudulent transactions, and unauthorized account access. The credit union should disclose the breach to regulators, notify affected members, offer credit monitoring, and explain the remediation steps taken to secure credentials and detect future misuse.`
+      },
+]
   },
 
   {
@@ -344,9 +460,199 @@ Infrastructure includes:
           3: "OAuth is helpful but doesn't address XSS itself."
         },
         hint: "Think about multiple layers: input, output, runtime, behavioral, and notification.",
-        explanationBefore: "Defense in depth means redundancy: multiple controls catch what others miss."
-      }
-    ]
+        explanationBefore: "Defense in depth means redundancy: multiple controls catch what others miss.",
+        isOpenEnded: true,
+        answer: `PREVENTION LAYERS FOR XSS + SESSION HIJACKING:
+
+1. INPUT VALIDATION
+   • Validate review text character set (alphanumeric + safe punctuation only)
+   • Reject HTML tags, script tags, event handlers
+   • Use whitelist approach for allowed characters
+
+2. OUTPUT ENCODING
+   • HTML-escape all user content: <, >, &, ", '
+   • Convert <script> to &lt;script&gt; (rendered as text, not executed)
+   • Use templating engines with auto-escaping enabled
+
+3. RUNTIME PROTECTION
+   • Content Security Policy (CSP) headers: no inline scripts allowed
+   • Disable inline <script> tags entirely
+   • Only allow scripts from trusted domains
+
+4. SESSION MANAGEMENT
+   • Session timeout after 15-30 minutes of inactivity
+   • Secure, HttpOnly, SameSite cookie flags
+   • Per-request CSRF tokens
+
+5. BEHAVIORAL MONITORING
+   • Alert on email change attempts (requires password re-entry)
+   • Anomaly detection: new devices or geolocations
+   • Unusual order patterns (high-value, unusual shipping address)
+
+6. REGULAR TESTING
+   • Automated XSS scanning in deployment pipeline
+   • Manual penetration testing quarterly
+   • Code review focus on user input handling
+
+Result: Even if one layer fails, others catch the attack.`
+      },
+          {
+        question: "What additional control would best stop stolen session cookies from leading to account takeover?",
+        options: [
+          "Requiring MFA for every new session",
+          "Disabling cookies altogether",
+          "Using a weaker encryption cipher",
+          "Allowing sessions to stay active indefinitely"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Cookies are required for web sessions; they just need better protection.",
+          2: "Weaker ciphers reduce security, not improve it.",
+          3: "Long-lived sessions make theft more damaging."
+        },
+        hint: "Even stolen cookies are useless if a second factor is required.",
+        explanationBefore: "MFA can make session hijacking much harder, especially when cookies are stolen."
+      },
+      {
+        question: "What is the main reason PCI-DSS certification did not prevent this compromise?",
+        options: [
+          "Compliance checks may not cover every application flow or misconfiguration",
+          "PCI-DSS is only for hardware security",
+          "The company was not actually certified",
+          "Payment tokens are inherently insecure"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "PCI-DSS is not limited to hardware.",
+          2: "The scenario states certification existed.",
+          3: "Tokenization is a strong security control if used correctly."
+        },
+        hint: "Certification is a snapshot, not a guarantee of complete security.",
+        explanationBefore: "Compliance is necessary, but not sufficient for real-world protection."
+      },
+      {
+        question: "Which control would reduce the impact of stolen customer session cookies?",
+        options: [
+          "Shorter session timeouts and device binding",
+          "Allowing automatic login from unfamiliar locations",
+          "Storing sessions in plain text",
+          "Only requiring email confirmation"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "That increases risk.",
+          2: "Plain text storage reduces security.",
+          3: "Email confirmation is not enough to stop session abuse."
+        },
+        hint: "What makes a session cookie less useful if it is stolen?",
+        explanationBefore: "Tighter session controls help limit window of misuse."
+      },
+      {
+        question: "Which of these would best detect fraudulent refunds after account takeover?",
+        options: [
+          "Transaction risk analysis and refund anomaly alerts",
+          "Monthly user satisfaction surveys",
+          "Increasing password length",
+          "Removing the WAF entirely"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Surveys do not detect fraud in real time.",
+          2: "Password length does not help after session takeover.",
+          3: "A WAF still provides value for other attacks."
+        },
+        hint: "What should monitor the behavior of orders and refunds, not just login events?",
+        explanationBefore: "Behavioral and transaction monitoring can spot insider or session-based fraud quickly."
+      },
+      {
+        question: "Open-ended: Describe the attacker’s kill chain for this e-commerce compromise.",
+        options: [
+          "XSS in product reviews → stolen session cookies → account takeover → email change → fraudulent orders and refunds",
+          "SQL injection → database dump → credit card theft",
+          "DDoS attack → site outage → service disruption",
+          "Phishing email → malware installation → ransomware"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "No SQL injection was described.",
+          2: "There was no denial-of-service event.",
+          3: "This case did not involve malware or ransomware."
+        },
+        hint: "Follow the path from the initial XSS vulnerability to financial fraud.",
+        explanationBefore: "Mapping the kill chain helps identify where defenses should have stopped the attack.",
+        isOpenEnded: true,
+        answer: `1. Attacker discovers persistent XSS in product review section.
+2. Injects malicious JavaScript that steals session cookies from other customers.
+3. Uses stolen cookies to hijack accounts without credentials.
+4. Changes account email addresses to control notifications.
+5. Places fraudulent orders, reuses payment tokens, and requests refunds to attacker-controlled addresses.`
+      },
+      {
+        question: "Open-ended: Recommend a response plan to stop the fraud and protect affected customers.",
+        options: [
+          "Terminate compromised sessions, reset affected accounts, notify customers, review refund approvals, and strengthen XSS protections",
+          "Shut down the website permanently",
+          "Wait for the next audit cycle",
+          "Disable all email notifications"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Permanent shutdown is not a response plan.",
+          2: "Waiting allows the fraud to continue.",
+          3: "Notifications are part of customer protection."
+        },
+        hint: "The response should include containment, remediation, and customer communication.",
+        explanationBefore: "Effective incident response stops current abuse and restores trust.",
+        isOpenEnded: true,
+        answer: `1. Contain: Invalidate all active sessions, force password resets, and block malicious accounts.
+2. Investigate: Identify affected customers and fraudulent transactions.
+3. Remediate: Fix XSS vulnerabilities, patch input/output handling, and strengthen WAF rules.
+4. Notify: Inform customers, offer monitoring, and comply with regulatory breach reporting.
+5. Review: Improve fraud controls and payment monitoring to prevent recurrence.`
+      },
+      {
+        question: "Open-ended: Explain why PCI-DSS certification was not enough in this incident.",
+        options: [
+          "Because compliance focuses on specific controls, not every web application flaw or operational gap",
+          "Because PCI-DSS bans all third-party libraries",
+          "Because payment gateways cannot be trusted",
+          "Because certification means no vulnerabilities exist"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "PCI-DSS does not prohibit third-party libraries generally.",
+          2: "Payment gateways can be trusted if configured properly.",
+          3: "Certification does not guarantee the absence of weaknesses."
+        },
+        hint: "Think about the difference between meeting requirements and actual security posture.",
+        explanationBefore: "Compliance can miss application-specific bugs and human errors.",
+        isOpenEnded: true,
+        answer: `PCI-DSS certification validates certain controls, but it may not cover every insecure feature or configuration. In this case, the platform had XSS and session hijacking risks that compliance checks alone did not catch. Real security requires ongoing testing, secure development, and monitoring beyond certification.`
+      },
+      {
+        question: "Open-ended: Design vendor controls for the payment gateway and review system.",
+        options: [
+          "Require secure coding review for third-party integrations, enforce tokenization, validate input/output, and monitor vendor patch status",
+          "Use only vendors with a green logo",
+          "Disable all third-party features",
+          "Allow vendors to manage security themselves"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Logos are not a security metric.",
+          2: "Disabling features is impractical.",
+          3: "Outsourcing security does not remove accountability."
+        },
+        hint: "Vendor controls should include review, monitoring, and patch management.",
+        explanationBefore: "Third-party components are part of the attack surface and must be governed.",
+        isOpenEnded: true,
+        answer: `1. Require security reviews and code scanning for third-party integrations.
+2. Enforce tokenization and minimal data exposure in payment flows.
+3. Validate all user input and apply output encoding for review content.
+4. Monitor vendor security advisories and patch quickly when vulnerabilities appear.
+5. Include vendor risk assessment in procurement and ongoing oversight.`
+      },
+]
   },
 
   {
@@ -492,9 +798,209 @@ Cloud setup includes:
           3: "External management doesn't solve architectural issues."
         },
         hint: "Think about preventive (blocking), detective (finding), and responsive controls.",
-        explanationBefore: "Cloud governance combines roles, policies, automation, and human oversight."
-      }
-    ]
+        explanationBefore: "Cloud governance combines roles, policies, automation, and human oversight.",
+        isOpenEnded: true,
+        answer: `CLOUD GOVERNANCE FRAMEWORK:
+
+1. PREVENTIVE CONTROLS (Block misconfiguration)
+   • Default bucket creation: PRIVATE (not public)
+   • IAM Policy: Bucket creation requires explicit approval
+   • Role-based access: DevOps can create buckets, but not change ACLs
+   • Require encryption at bucket creation time
+   • Mandatory tagging for cost tracking and audit
+
+2. DETECTIVE CONTROLS (Find problems)
+   • Automated daily scan: Public bucket detection
+   • CloudTrail logging enabled on all API calls
+   • Configuration management database (CMDB): Track all buckets
+   • Access pattern analysis: Alert on unusual downloads
+   • Regular access audits (weekly for privileged, monthly for standard)
+
+3. RESPONSIVE CONTROLS (React to incidents)
+   • Alert pipeline: Public bucket → immediate notification
+   • Automated remediation: Auto-change public buckets to private
+   • Incident response playbook with timelines
+   • Root cause analysis for every security event
+   • Metrics tracking: MTTR (mean time to remediate)
+
+4. ARCHITECTURAL CONTROLS
+   • Separate backup buckets with different IAM policies
+   • Backup buckets cannot be made public (hardcoded restriction)
+   • Cross-region replication for disaster recovery
+   • Versioning enabled for backup buckets
+
+5. COMPLIANCE & AUDIT
+   • Quarterly: Manual review of all bucket configurations
+   • Annual: Third-party security audit of cloud setup
+   • Document all exceptions with approval chain
+   • Enforce MFA for any IAM policy changes
+
+6. TRAINING & CULTURE
+   • Onboarding: Cloud security best practices for all engineers
+   • Internal wiki: "How to safely create cloud resources"
+   • Post-incident: Learning session with team
+
+Result: Multiple layers catch configuration mistakes before they cause breaches.`
+      },
+      {
+        question: "Which control would have prevented the temporary bucket from becoming publicly readable?",
+        options: [
+          "A policy enforcing private-by-default bucket creation",
+          "Allowing developer-created buckets without review",
+          "Using only manual bucket configuration",
+          "Enabling public access for testing"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "That leaves the issue unresolved.",
+          2: "Manual configuration is error-prone.",
+          3: "Public access for testing is unsafe."
+        },
+        hint: "What default setting reduces human error in cloud storage?",
+        explanationBefore: "Secure defaults prevent accidental exposure."
+      },
+      {
+        question: "Why was bucket naming important in this disclosure?",
+        options: [
+          "Guessable names made the bucket discoverable via web search",
+          "Names determine encryption strength",
+          "Public buckets always use default names",
+          "Bucket names control IAM roles"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Names do not directly affect encryption.",
+          2: "Public buckets can have any name.",
+          3: "IAM roles are separate from bucket naming."
+        },
+        hint: "What made the attacker able to find the bucket online?",
+        explanationBefore: "Predictable resource names can make sensitive objects easy to locate."
+      },
+      {
+        question: "What is the primary risk of a forgotten temporary resource in the cloud?",
+        options: [
+          "It can accumulate data and remain exposed for long periods",
+          "It will automatically delete itself",
+          "It improves the speed of backups",
+          "It reduces cloud costs"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Exactly—forgotten resources can become long-term risk hotspots.",
+          2: "Temporary resources often remain indefinitely unless cleaned up.",
+          3: "Exposure is a security issue, not a cost-saving measure.",
+          4: "Public buckets can increase costs if abused."
+        },
+        hint: "What happens when a bucket is left in place and automated processes keep adding data?",
+        explanationBefore: "Forgotten infrastructure can become a slow-moving security disaster."
+      },
+      {
+        question: "Which cloud governance practice would have detected this leak earlier?",
+        options: [
+          "Automated policy checks for public storage and access reviews",
+          "Requiring developers to memorize all bucket names",
+          "Turning off cloud logging",
+          "Using local backups only"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Monitoring and policy enforcement are the correct controls.",
+          2: "Memorization is not reliable.",
+          3: "Logging is essential for detection.",
+          4: "Local backups do not address public data exposure."
+        },
+        hint: "Policy as code and audits are key in cloud security.",
+        explanationBefore: "Automation can catch misconfigurations that manual reviews miss."
+      },
+      {
+        question: "Open-ended: Outline a runbook for remediating a publicly exposed cloud storage bucket.",
+        options: [
+          "Identify the bucket, change permissions to private, audit contents, rotate credentials, and review why it was created",
+          "Delete the bucket immediately without review",
+          "Ignore it if no one complains",
+          "Copy the bucket to a public location"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Blind deletion may destroy evidence and disrupt business.",
+          2: "Ignoring an exposure is unsafe.",
+          3: "Making it more public is obviously wrong."
+        },
+        hint: "Remediation should stop exposure and preserve evidence. ",
+        explanationBefore: "A proper runbook balances containment, investigation, and prevention. ",
+        isOpenEnded: true,
+        answer: `1. Contain: Immediately remove public access or restrict permissions.
+2. Investigate: Determine what data was exposed and for how long.
+3. Audit: Review IAM roles, bucket policy, and creation process.
+4. Remediate: Correct the misconfiguration, enforce private-by-default, and delete unneeded resources.
+5. Document: Update procedures so temporary resources are tracked and cleaned up.`
+      },
+      {
+        question: "Open-ended: Explain how IAM roles and least privilege should apply to cloud engineers.",
+        options: [
+          "Assign only the permissions needed to perform specific tasks and remove broad admin privileges",
+          "Give every engineer full admin access for convenience",
+          "Use a single shared admin role for all engineers",
+          "Allow engineers to self-approve permissions"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Full admin access increases risk unnecessarily.",
+          2: "Shared roles eliminate accountability.",
+          3: "Self-approval bypasses governance."
+        },
+        hint: "Least privilege means no more rights than required.",
+        explanationBefore: "Proper IAM limits the blast radius of mistakes and attacks. ",
+        isOpenEnded: true,
+        answer: `Cloud engineers should receive narrowly scoped permissions for their role. For example, a backup engineer can manage backup buckets but not change general IAM policies. Temporary elevated access should require approval and have an expiration. All role assignments should be reviewed regularly.`
+      },
+      {
+        question: "Open-ended: Recommend monitoring and alerting for cloud storage misconfiguration.",
+        options: [
+          "Automated scans for public buckets, alerts on permission changes, audit log reviews, and periodic configuration assessments",
+          "Manual bucket name checks once a year",
+          "Only rely on user reports",
+          "Disable all storage accesses"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Yearly checks are too infrequent.",
+          2: "User reports are unreliable.",
+          3: "Disabling all storage is not practical."
+        },
+        hint: "Look for automated detection of bad permissions and changes.",
+        explanationBefore: "Continuous monitoring is necessary for dynamic cloud environments.",
+        isOpenEnded: true,
+        answer: `1. Run daily or hourly scans to detect public buckets and unsecured objects.
+2. Alert on any permission or ACL changes to cloud storage.
+3. Correlate cloud audit logs with configuration drift.
+4. Use policy-as-code tools to enforce secure defaults and prevent public creation.
+5. Review alerts as part of regular security operations.`
+      },
+      {
+        question: "Open-ended: Create a process to automatically detect and remediate public cloud storage buckets.",
+        options: [
+          "Scan for public buckets daily, alert owners, auto-revoke public access, and document corrective actions",
+          "Rely on users to report exposures",
+          "Delete all temporary buckets before use",
+          "Ignore cloud storage and use only local disks"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "User reports are too slow and unreliable.",
+          2: "Automatic deletion is not practical for legitimate temporary resources.",
+          3: "Local disks are not a cloud storage remediation strategy."
+        },
+        hint: "Automation should find bad settings and help fix them quickly.",
+        explanationBefore: "Cloud environments are dynamic; automated detection and remediation reduce risk.",
+        isOpenEnded: true,
+        answer: `1. Run scheduled scans for public or improperly permissioned buckets.
+2. Alert the resource owner and security team immediately.
+3. Automatically change permissions to private for known sensitive resources.
+4. Record the event and require a review of why the bucket was created.
+5. Update policies to prevent future public bucket creation.`
+      },
+]
   },
 
   {
@@ -643,9 +1149,220 @@ The infrastructure includes:
           3: "Manual backups are unreliable."
         },
         hint: "Think about patch timing, backup isolation, network architecture, and verification.",
-        explanationBefore: "Ransomware defense combines prevention (patching, segmentation) and recovery (resilient backups)."
-      }
-    ]
+        explanationBefore: "Ransomware defense combines prevention (patching, segmentation) and recovery (resilient backups).",
+        isOpenEnded: true,
+        answer: `PATCHING & BACKUP STRATEGY:
+
+1. VULNERABILITY MANAGEMENT
+   Critical Patches (CVEs with active exploits):
+   • Apply within 24-48 hours of release
+   • Out-of-cycle patching if necessary
+   • Classify as emergency in change management
+   
+   High-Priority Patches:
+   • Apply within 2 weeks
+   • Staged rollout (test env → dev → production)
+   
+   Testing:
+   • Always test in isolated environment first
+   • No skipping testing for critical patches
+
+2. BACKUP ARCHITECTURE
+   3-2-1 Rule: 3 copies, 2 media types, 1 offsite
+   
+   Copy 1: Local daily backup
+   • On local NAS
+   • Immutable for 30 days (write-once)
+   • Cannot be deleted even by admin
+   
+   Copy 2: Cold storage (tape or cloud archive)
+   • Quarterly incremental
+   • Air-gapped (no network connection)
+   • Stored in different building
+   
+   Copy 3: Geographically remote
+   • Different cloud region
+   • Encrypted in transit and at rest
+   • Restore tested monthly
+
+3. NETWORK SEGMENTATION
+   • ICS network: Separate VLAN
+   • Restrictive firewall rules (ICS cannot initiate outbound)
+   • Dedicated jump box for admin access
+   • No shared credentials between zones
+
+4. BACKUP VERIFICATION
+   • Monthly restore test (on isolated system)
+   • Document recovery time objective (RTO): max 4 hours
+   • Document recovery point objective (RPO): max 1 hour data loss
+   • Automated integrity checks
+
+5. INCIDENT RESPONSE
+   • Ransomware discovered → isolate affected systems within 15 minutes
+   • Determine RPO needed from backup
+   • Restore from immutable backup
+   • Post-incident: Review what failed
+
+Result: Even with ransomware, recovery possible without paying ransom.`
+      },
+      {
+        question: "What is the most important reason to patch VPN appliances quickly when a critical CVE is released?",
+        options: [
+          "Active exploitation makes unpatched systems an immediate risk",
+          "Patches always improve performance",
+          "VPN appliances are not important to operations",
+          "Users prefer patched systems"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Performance is not the primary security driver.",
+          2: "VPN access is critical to remote support and security.",
+          3: "User preference is irrelevant to security."
+        },
+        hint: "Critical vulnerabilities in exposed appliances are highest priority.",
+        explanationBefore: "When exploits are in the wild, delay means attackers can compromise the system."
+      },
+      {
+        question: "Why is it dangerous for ransomware to reach backups stored on the same network?",
+        options: [
+          "Because backups can be encrypted too, removing the ability to restore",
+          "Backups make recovery faster",
+          "Backup keys are always safe",
+          "Network backups are inherently immutable"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Exactly — accessible backups become targets.",
+          2: "If backups are encrypted, recovery is blocked.",
+          3: "Keys can be compromised if the attacker has access.",
+          4: "Being on the same network does not guarantee immutability."
+        },
+        hint: "Backup isolation is essential for ransomware resilience.",
+        explanationBefore: "Ransomware often seeks backups after encrypting primary systems."
+      },
+      {
+        question: "Which architecture would best isolate ICS from corporate ransomware spread?",
+        options: [
+          "A one-way gateway/jump box and separate ICS network segments",
+          "Putting ICS systems on the same VLAN as all workstations",
+          "Removing firewalls between ICS and corporate networks",
+          "Allowing all traffic from VPN into ICS"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Co-mingling networks increases blast radius.",
+          2: "Removing firewalls removes isolation.",
+          3: "Unrestricted VPN access enables lateral movement."
+        },
+        hint: "ICS should be reachable only through controlled, audited paths.",
+        explanationBefore: "Segmentation and gateway controls limit the spread of ransomware."
+      },
+      {
+        question: "What should a strong change management policy require for critical patches?",
+        options: [
+          "Risk assessment, expedited approval, controlled testing, and emergency deployment",
+          "Waiting for the next quarterly review",
+          "Never patching critical systems",
+          "Only patching after a breach occurs"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Waiting too long increases exposure.",
+          2: "Not patching is unsafe.",
+          3: "Reactive patching after a breach is too late."
+        },
+        hint: "Emergency patches need a fast but controlled process.",
+        explanationBefore: "A patch policy should balance speed with stability."
+      },
+      {
+        question: "Open-ended: Create an incident containment strategy after ransomware is detected.",
+        options: [
+          "Isolate affected segments, disable compromised accounts, preserve evidence, and verify backup integrity",
+          "Pay the ransom immediately",
+          "Do nothing and wait for the malware to stop",
+          "Disconnect the entire internet permanently"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Paying the ransom is not containment.",
+          2: "Waiting allows the attack to spread.",
+          3: "Disconnecting everything is not practical or targeted."
+        },
+        hint: "Containment is about stopping spread and preserving recovery options.",
+        explanationBefore: "A strong containment plan helps limit damage quickly.",
+        isOpenEnded: true,
+        answer: `1. Immediately isolate infected systems from the network.
+2. Disable compromised VPN and administrative credentials.
+3. Block ransomware command-and-control traffic.
+4. Verify which backups remain untouched and immutable.
+5. Begin eradicating ransomware from infected hosts while preserving forensic evidence.`
+      },
+      {
+        question: "Open-ended: Explain why network segmentation failed in this case and how to fix it.",
+        options: [
+          "Because the corporate and ICS networks were too connected; fix it by enforcing strict segmentation and limiting VPN access",
+          "Because the network was encrypted",
+          "Because backups were fresh",
+          "Because the VPN had strong passwords"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Encryption does not prevent lateral movement.",
+          2: "Backup freshness is unrelated to segmentation.",
+          3: "Strong passwords do not protect network boundaries if routes are open."
+        },
+        hint: "Segmentation needs both design and enforcement.",
+        explanationBefore: "A segmentation failure means the attacker could move from one zone to another too easily.",
+        isOpenEnded: true,
+        answer: `The attacker accessed VPN and then traversed from the corporate zone into the ICS zone because those zones were not properly isolated. Fixing it requires separate VLANs, strict firewall rules, and a jump box or gateway for any ICS access. Monitoring and validation should enforce that ICS traffic cannot originate directly from corporate networks.`
+      },
+      {
+        question: "Open-ended: Recommend backup policies that would defeat ransomware in this environment.",
+        options: [
+          "Immutable offsite backups, regular restore testing, backup separation from production, and limited access control",
+          "Backing up everything to the same server",
+          "Never testing restores",
+          "Keeping backups open to all users"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Same-server backups can be encrypted too.",
+          2: "Untested backups may be unusable.",
+          3: "Open backups are insecure."
+        },
+        hint: "The best backup defense is isolation and verification.",
+        explanationBefore: "Ransomware resilience depends on backups that attackers cannot alter.",
+        isOpenEnded: true,
+        answer: `1. Maintain immutable backups that cannot be changed or deleted.
+2. Keep a copy offsite or air-gapped, separate from production network.
+3. Test restores regularly to ensure backups are usable.
+4. Limit access to backup systems to trusted administrators only.
+5. Document recovery procedures and recovery time objectives.`
+      },
+      {
+        question: "Open-ended: Describe how vendor notification and patch management should work for critical appliances.",
+        options: [
+          "Monitor vendor advisories, prioritize critical fixes, test quickly, and deploy emergency patches when exploits are active",
+          "Ignore vendor alerts until a breach happens",
+          "Only patch during annual maintenance",
+          "Allow users to decide when to patch"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Waiting for a breach is unsafe.",
+          2: "Annual patching is too infrequent for critical flaws.",
+          3: "Users should not decide security patch timing."
+        },
+        hint: "Vendor notifications should trigger an emergency patch process when needed.",
+        explanationBefore: "Critical appliances require proactive vulnerability management.",
+        isOpenEnded: true,
+        answer: `1. Subscribe to vendor security advisories and vulnerability feeds.
+2. Assess criticality immediately and assign emergency patch priority for exploits in the wild.
+3. Test patches in a controlled environment and deploy quickly.
+4. Document the patch decision and confirm successful installation.
+5. Review patch management after each critical update for process improvement.`
+      },
+]
   },
 
   {
@@ -792,9 +1509,244 @@ The infrastructure includes:
           3: "Trust is necessary but must be verified."
         },
         hint: "Think about prevention, detection, and response capabilities.",
-        explanationBefore: "Insider threat programs balance security with trust and operational efficiency."
-      }
-    ]
+        explanationBefore: "Insider threat programs balance security with trust and operational efficiency.",
+        isOpenEnded: true,
+        answer: `COMPREHENSIVE INSIDER THREAT PROGRAM:
+
+1. PREVENTION LAYER
+   Least Privilege:
+   • Junior associates: Access to assigned cases only
+   • Senior associates: Access to own cases + team collaboration
+   • Partners: Access to all cases for their clients
+   • Paralegal: Access only to administrative documents
+   
+   Regular Access Reviews:
+   • Quarterly: Manager reviews each team member's file access
+   • Remove access immediately when role changes
+   • Document all access grants with business justification
+
+2. DETECTION LAYER
+   Continuous Audit Log Review:
+   • Daily automated analysis of file access patterns
+   • Alert on: access outside normal hours, bulk file downloads, access to new clients
+   
+   Anomaly Detection:
+   • Machine learning baseline: typical file access patterns
+   • Alert when patterns change significantly
+   • Example: person who never accessed "litigation" now accesses 50+ litigation files
+   
+   Behavioral Indicators:
+   • Promotion denial/performance issues (motivation)
+   • Financial hardship indicators
+   • Sudden travel or remote access pattern changes
+
+3. DATA LOSS PREVENTION (DLP)
+   Endpoint DLP:
+   • Monitor all file transfers (USB, cloud, email)
+   • Block attempts to copy files to personal devices
+   • Block uploads to personal email or external file-sharing
+   • Log all attempts (even blocked ones)
+   
+   Network DLP:
+   • Inspect outbound traffic for confidential file content
+   • Watermark files for tracking
+   • Alert on suspicious patterns
+
+4. SECURITY AWARENESS
+   Training Program:
+   • Quarterly: Ethics and confidentiality policies
+   • Annual: How to report security concerns
+   • Mandatory acknowledgment of policies
+   
+   Culture:
+   • Create safe reporting channels (ethics hotline)
+   • "See something, say something" messaging
+
+5. BACKGROUND CHECKS & VETTING
+   Initial:
+   • Pre-employment background check
+   • Reference checks
+   • Financial history review
+   
+   Ongoing:
+   • Annual credit check for those with financial access
+   • Monitor for criminal charges
+
+6. INCIDENT RESPONSE
+   Detection to Response:
+   • When suspicious access detected: Interview person
+   • Preserve all evidence (logs, files)
+   • Involve legal department
+   • Escalate to law enforcement if criminal
+   
+   Post-Incident:
+   • Root cause analysis: Why did detection fail?
+   • Update access policies
+   • Communicate lessons to organization
+
+Example: The 6-month delay wouldn't happen because:
+- Weekly audit log review would have caught unusual access in week 1
+- Endpoint DLP would have blocked or flagged the email attempt
+- Anomaly detection would have alerted on new client file access`
+      },
+      {
+        question: "Which control could have detected repeated unauthorized access before the leak became large?",
+        options: [
+          "Behavioral analytics on file access patterns",
+          "Stronger password complexity rules",
+          "More frequent backups",
+          "Longer email retention"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Passwords do not stop authorized misuse.",
+          2: "Backups don't detect access patterns.",
+          3: "Email retention is unrelated to file access."
+        },
+        hint: "What detects unusual activity by a legitimate user?",
+        explanationBefore: "Behavior analytics can flag users accessing files outside their normal scope."
+      },
+      {
+        question: "Why is employee morale relevant to insider threat programs?",
+        options: [
+          "Disgruntled employees are more likely to abuse access",
+          "Morale affects the speed of network traffic",
+          "Happy employees do not need passwords",
+          "Morale replaces technical controls"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Morale is a factor in insider risk, not network performance.",
+          2: "Passwords are still required.",
+          3: "Technical controls remain necessary."
+        },
+        hint: "Insider threats often come from unhappy or disgruntled staff.",
+        explanationBefore: "Security programs should include people and culture, not just technology."
+      },
+      {
+        question: "What is the weakness of audit logging by itself?",
+        options: [
+          "It records activity but does not automatically stop misuse",
+          "It makes systems slower",
+          "Logs are always encrypted",
+          "Logs prevent insiders from accessing files"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Correct — logs help investigation but need monitoring and response.",
+          2: "While logging adds overhead, that's not the main weakness.",
+          3: "Logs may or may not be encrypted; that is not the core issue.",
+          4: "Logs do not prevent actions; they record them."
+        },
+        hint: "Detection is not the same as prevention.",
+        explanationBefore: "The value of logs depends on whether someone reviews and acts on them."
+      },
+      {
+        question: "How should access reviews be conducted after an employee role change?",
+        options: [
+          "Immediately remove unneeded access and verify current permissions against role requirements",
+          "Wait until the next annual review",
+          "Grant additional access temporarily",
+          "Do nothing unless a problem appears"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Waiting increases the window of inappropriate access.",
+          2: "Temporary extra access increases risk.",
+          3: "Proactive review is better than reactive response."
+        },
+        hint: "Privilege should be reduced as roles change, not left unchanged.",
+        explanationBefore: "Timely access review is a core part of least privilege."
+      },
+      {
+        question: "Open-ended: Propose a post-incident response for insider data leakage.",
+        options: [
+          "Contain the insider, preserve evidence, notify affected parties, and tighten access controls",
+          "Ignore the incident because the insider was authorized",
+          "Fire anyone who accessed files",
+          "Delete all logs"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Authorized users can still misuse access.",
+          2: "Discipline should follow investigation, not assumption.",
+          3: "Logs are needed for forensic analysis."
+        },
+        hint: "Post-incident response should preserve evidence and protect clients. ",
+        explanationBefore: "Handling insider incidents requires both security and legal care. ",
+        isOpenEnded: true,
+        answer: `1. Contain the user and disable access while preserving systems.
+2. Preserve audit logs and evidence for investigation.
+3. Notify affected clients and regulatory bodies as required.
+4. Review and adjust access controls, DLP, and monitoring.
+5. Conduct a root cause analysis and update training/procedures.`
+      },
+      {
+        question: "Open-ended: Explain how DLP and behavioral analytics work together to stop insider leaks.",
+        options: [
+          "DLP blocks or flags sensitive data movement while behavior analytics detects unusual access or transfer patterns",
+          "DLP replaces behavior analytics completely",
+          "Behavior analytics prevents data from being copied",
+          "They are unrelated security tools"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "They are complementary, not replacements.",
+          2: "Behavior analytics detects patterns, it doesn't directly block data.",
+          3: "They work best together."
+        },
+        hint: "One tool protects data; the other protects behavior.",
+        explanationBefore: "Insider protection is strongest when content and context are both monitored.",
+        isOpenEnded: true,
+        answer: `DLP inspects file transfers and blocks or alerts on sensitive content leaving the environment. Behavioral analytics looks at who is accessing what and flags deviations from normal patterns. Together, they can catch both deliberate exfiltration and unusual misuse of legitimate access.`
+      },
+      {
+        question: "Open-ended: Design a least privilege access review cycle for the law firm.",
+        options: [
+          "Quarterly role-based reviews, immediate revocation on transfers, justification for exceptions, and audit documentation",
+          "Review access once when employees join",
+          "Give everyone the same access",
+          "Let employees request access when they need it"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "One-time review is insufficient in dynamic environments.",
+          2: "Uniform access increases risk.",
+          3: "Reactive access requests leave gaps."
+        },
+        hint: "Regular reviews and documented justification help enforce least privilege.",
+        explanationBefore: "Access reviews help keep permissions aligned with current job needs.",
+        isOpenEnded: true,
+        answer: `1. Conduct quarterly access reviews for all roles.
+2. Require managers to approve each permission based on current responsibilities.
+3. Immediately revoke access when roles change or employees leave.
+4. Document any exceptions and reevaluate them regularly.
+5. Use automation to identify stale privileges and trigger reviews.`
+      },
+      {
+        question: "Open-ended: Describe how to preserve evidence while maintaining client confidentiality.",
+        options: [
+          "Capture logs and copies of suspicious activity, then isolate only relevant evidence while respecting client privacy",
+          "Share all data with the security team indiscriminately",
+          "Delete confidential documents immediately",
+          "Ignore evidence to protect privacy"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Careless sharing can violate confidentiality.",
+          2: "Deleting documents destroys evidence.",
+          3: "Ignoring evidence prevents investigation."
+        },
+        hint: "Evidence preservation and confidentiality both matter during an insider incident.",
+        explanationBefore: "Legal and security teams must coordinate on sensitive investigations. ",
+        isOpenEnded: true,
+        answer: `1. Collect only the relevant logs and metadata needed to investigate the incident.
+2. Isolate affected systems to prevent further leakage.
+3. Work with legal to determine which client documents can be reviewed.
+4. Maintain strict access controls around the investigation data.
+5. Communicate appropriately with clients while preserving confidentiality.`
+      },
+]
   },
 
   {
@@ -941,9 +1893,260 @@ Development practices include:
           3: "Vendor notification is often too slow."
         },
         hint: "Think about inventory, monitoring, response process, and testing.",
-        explanationBefore: "Dependency management requires systematic processes and prioritization."
-      }
-    ]
+        explanationBefore: "Dependency management requires systematic processes and prioritization.",
+        isOpenEnded: true,
+        answer: `DEPENDENCY VULNERABILITY MANAGEMENT:
+
+1. INVENTORY & VISIBILITY
+   Software Bill of Materials (SBOM):
+   • Automated: Generate from package managers (npm, pip, maven)
+   • Include all direct dependencies AND transitive dependencies
+   • Track versions, licenses, and maintenance status
+   • Update with each build
+   
+   Scanning Tools:
+   • Integrate vulnerability scanners in CI/CD pipeline
+   • Tools: Snyk, Dependabot, WhiteSource, Black Duck
+   • Scan on: commit, build, deployment, daily
+   • Maintain database of known vulnerabilities (NVD, GitHub Advisory Database)
+
+2. SEVERITY CLASSIFICATION & PRIORITIZATION
+   Critical (CVSS 9.0-10.0):
+   • Actively exploited in the wild
+   • No workaround available
+   • Response: 24-48 hours
+   • Example: Remote code execution
+   
+   High (CVSS 7.0-8.9):
+   • Could impact confidentiality or availability
+   • Response: 1-2 weeks
+   • Example: Privilege escalation
+   
+   Medium (CVSS 4.0-6.9):
+   • Limited impact
+   • Response: Monthly update cycle
+   • Example: Information disclosure
+   
+   Low (CVSS 0.1-3.9):
+   • Minor impact
+   • Response: Next regular update
+
+3. PATCHING PROCESS
+   For Critical Vulnerabilities:
+   • Create emergency ticket immediately upon discovery
+   • Skip normal review process
+   • Apply patch to development → test → staging → production in 48 hours
+   • Minimal testing required (functional + security regression)
+   • Document business justification
+   
+   For High/Medium:
+   • Include in next monthly update cycle
+   • Batch updates to reduce deployment overhead
+   • Full regression testing before production
+   
+   For Low:
+   • Include in quarterly updates
+   • Group with feature releases
+
+4. TESTING & VALIDATION
+   Before Deploying:
+   • Build automation tests against new version
+   • Smoke testing in staging environment
+   • Dependency conflict checking (no breaking changes)
+   • Security regression testing
+   
+   Monitoring After Deployment:
+   • Error rate monitoring
+   • Performance metrics
+   • Rollback plan ready
+   • Monitor for 24 hours post-deployment
+
+5. SUPPLY CHAIN RISK ASSESSMENT
+   For Each Dependency:
+   • Maintainability: Active development? Community size?
+   • Security track record: History of vulnerabilities?
+   • Licensing: Compatible with our product?
+   • Alternative options: Better alternatives available?
+   
+   Ongoing:
+   • Monitor maintainer for security incidents
+   • Watch for project abandonment
+   • Evaluate newer versions for improvements
+
+6. DETECTION & RESPONSE
+   Automated Alerts:
+   • Slack/email notification when new vulnerability discovered
+   • Include: Severity, affected versions, remediation path
+   • Route to appropriate team based on severity
+   
+   Incident Response:
+   • For exploited vulnerabilities: Activate incident response plan
+   • Audit logs: Who had access to affected systems?
+   • Determine if exploitation occurred
+
+Example for This Case:
+Day 1: PDF library vulnerability disclosed
+  ↓ Scanner detects vulnerability in dependency
+  ↓ Team is alerted (critical severity)
+  ↓ Emergency patch prepared
+Day 1-2: Testing in development & staging
+Day 2: Deploy to production with monitoring
+Result: Exploit window: 1-2 days instead of 10 days`
+      },
+      {
+        question: "What is the benefit of integrating dependency vulnerability alerts into CI/CD?",
+        options: [
+          "Faster detection and remediation of vulnerable libraries before deployment",
+          "It makes builds slower for no reason",
+          "Dependencies become optional",
+          "It replaces the need for testing"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Slower builds can be worth it, but it's not the main benefit.",
+          2: "Dependencies are still required.",
+          3: "Testing is still necessary."
+        },
+        hint: "Early detection helps fix issues before they reach production.",
+        explanationBefore: "CI/CD integration catches vulnerable dependencies as part of the development workflow."
+      },
+      {
+        question: "Why can a monthly update cycle be too slow for third-party vulnerabilities?",
+        options: [
+          "Because critical exploits can be active well before the next cycle arrives",
+          "Because monthly cycles are illegal",
+          "Because third-party libraries never need updating",
+          "Because developers do not like updates"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Critical vulnerabilities often require emergency response.",
+          2: "It is not illegal to patch monthly, but may be too slow.",
+          3: "All code can have vulnerabilities.",
+          4: "Developer preference is not the main issue."
+        },
+        hint: "Active exploitation changes the required patch timeline.",
+        explanationBefore: "Regular update schedules are fine for low-risk items, not critical flaws."
+      },
+      {
+        question: "What should an SBOM include to help respond to vulnerabilities?",
+        options: [
+          "Component names, versions, licenses, and dependency relationships",
+          "Only the project name",
+          "Only the newest package versions",
+          "Only the packages installed in production"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "A complete inventory requires more than the project name.",
+          2: "Newest versions do not identify current dependencies.",
+          3: "Dependencies in all environments matter for risk assessment."
+        },
+        hint: "Knowing exactly what you use is the first step in managing third-party risk.",
+        explanationBefore: "An SBOM gives visibility into the software supply chain."
+      },
+      {
+        question: "What extra control besides patching helps reduce software supply chain risk?",
+        options: [
+          "Vendor security review and dependency health checks",
+          "Using the oldest available libraries",
+          "Never using open-source code",
+          "Ignoring security advisories"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Older libraries are not safer.",
+          2: "Avoiding open source is usually impractical.",
+          3: "Ignoring advisories increases risk."
+        },
+        hint: "Evaluate the trustworthiness and maintenance of the components you use.",
+        explanationBefore: "Risk management combines patching with careful sourcing."
+      },
+      {
+        question: "Open-ended: Outline a response workflow for a newly disclosed third-party vulnerability.",
+        options: [
+          "Identify affected systems, assess severity, test patch, deploy emergency update, and monitor for issues",
+          "Wait until the next quarterly cycle",
+          "Assume the vulnerability does not apply",
+          "Remove the library from the project immediately"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Waiting too long leaves exposure.",
+          2: "Vulnerabilities should be evaluated, not ignored.",
+          3: "Immediate removal may break the project without planning."
+        },
+        hint: "A good workflow is fast, informed, and controlled.",
+        explanationBefore: "Responding to dependencies requires both security and engineering coordination. ",
+        isOpenEnded: true,
+        answer: `1. Identify which services use the vulnerable library.
+2. Assess exploitability and impact.
+3. Test the patch or workaround in a safe environment.
+4. Deploy the fix urgently if critical, or schedule it if lower risk.
+5. Monitor after deployment and update documentation.`
+      },
+      {
+        question: "Open-ended: Explain the trade-offs between pinning dependency versions and staying current.",
+        options: [
+          "Pinning gives stability but requires active update management; staying current reduces drift but may introduce compatibility risk",
+          "Pinning is always better than updating",
+          "Staying current means never testing changes",
+          "There are no trade-offs"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Pinning alone is not always best.",
+          2: "Updates still need testing.",
+          3: "Being current should include testing."
+        },
+        hint: "Think about stability versus responsiveness. ",
+        explanationBefore: "Dependency management balances predictability with security. ",
+        isOpenEnded: true,
+        answer: `Pinning versions helps maintain a stable build and avoid breaking changes, but it means you must manually update and patch dependencies. Staying current reduces the window of vulnerability but can introduce compatibility issues. The right approach is controlled updates, testing, and emergency patching for critical flaws.`
+      },
+      {
+        question: "Open-ended: Propose how to communicate third-party dependency risk to leadership.",
+        options: [
+          "Provide concise risk summaries, exploit status, affected business services, and remediation timelines",
+          "Send a full list of all package versions every day",
+          "Keep the information within the engineering team only",
+          "Only mention security risks during audits"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Daily version lists are overwhelming and not useful.",
+          2: "Leadership needs visibility to make decisions.",
+          3: "Waiting for audits is too late."
+        },
+        hint: "Leadership communication should focus on business impact and remediation. ",
+        explanationBefore: "Security teams should translate technical risk into business risk. ",
+        isOpenEnded: true,
+        answer: `Summarize which third-party vulnerabilities affect critical services, how severe the exposure is, what is being done to fix it, and what the expected timeline is. Include any potential operational or regulatory impacts and whether there is an active exploit in the wild.`
+      },
+      {
+        question: "Open-ended: Describe how to enforce third-party library risk management across development and operations teams.",
+        options: [
+          "Integrate SBOMs, automated scanning, security reviews, and clear escalation procedures across both teams",
+          "Let developers choose libraries without oversight",
+          "Remove all third-party dependencies",
+          "Leave risk management to the QA team only"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Unmanaged choices increase risk.",
+          2: "Removing all dependencies is usually impossible.",
+          3: "QA alone cannot manage supply chain risk effectively."
+        },
+        hint: "Risk management should be shared and enforced through process and tooling.",
+        explanationBefore: "Both development and operations must participate in dependency security. ",
+        isOpenEnded: true,
+        answer: `1. Maintain an SBOM and keep it updated.
+2. Run automated dependency scans in CI and on deployed environments.
+3. Define clear processes for vulnerability escalation and patching.
+4. Train developers on secure dependency selection and operations on deployment security.
+5. Review third-party risk in regular cross-team meetings.`
+      },
+]
   },
 
   {
@@ -1090,8 +2293,290 @@ Security measures include:
           3: "Daily changes would force extremely poor practices."
         },
         hint: "Think about multiple factors, verification methods, and human-centric security.",
-        explanationBefore: "Authentication and recovery must account for both technical and social weaknesses."
-      }
-    ]
+        explanationBefore: "Authentication and recovery must account for both technical and social weaknesses.",
+        isOpenEnded: true,
+        answer: `SECURE AUTHENTICATION & ACCOUNT RECOVERY:
+
+1. PRIMARY AUTHENTICATION: MULTI-FACTOR (MFA)
+   Factor 1: Something you know
+   • Passphrase (longer, memorable phrase)
+   • NOT security questions (answers can be researched)
+   • NOT password hints (hints are public)
+   
+   Factor 2: Something you have
+   • Hardware security key (FIDO2/WebAuthn) - MOST SECURE
+   • Authenticator app (Microsoft/Google Authenticator)
+   • SMS (less secure but better than nothing) - last resort
+   
+   Factor 3: Something you are
+   • Biometric (fingerprint, face)
+   • Optional third factor for high-value accounts
+
+2. PASSWORD POLICY (NOT frequency-based)
+   Instead of 90-day mandatory changes:
+   • 16-character minimum (longer is better)
+   • Passphrase requirement (e.g., "BlueMountain-7Tigers-Sunset")
+   • Check against breached password lists
+   • Allow passphrases (mixed case, words, numbers)
+   • NO mandatory change expiry (change only if breached)
+   
+   Why this works better:
+   • Longer passwords are stronger and less frequently written down
+   • Users can choose memorable phrases
+   • No Post-It note epidemic
+   • Don't force password change on schedule
+
+3. ACCOUNT RECOVERY PROCESS (Multi-step verification)
+   Step 1: Identity Verification (before any reset)
+   • In-person verification at registered office location
+   • Government ID check + employee badge
+   • For remote employees: Video call with IT security team
+   • Out-of-band verification (not the compromised account)
+   
+   Step 2: Security Questions (with GOOD questions)
+   GOOD QUESTIONS:
+   • What was the name of your first teacher? (personal, hard to research)
+   • What was your childhood address? (hard to find on social media)
+   • What was your first car model and color? (specific and not obvious)
+   
+   BAD QUESTIONS (from this case):
+   • Favorite pet name (posted on Instagram)
+   • Mother's maiden name (on genealogy websites)
+   • First school name (on LinkedIn)
+   
+   Step 3: Verification Callback
+   • IT calls phone number on file (verified separately)
+   • Confirms recovery request with employee
+   • Uses code-word method or callback number validation
+   
+   Step 4: Time-limited Reset Link
+   • Reset link valid for 15 minutes only
+   • One-time use (burns after first use)
+   • Sent to registered email with warning: "Did you request this?"
+   • Includes IP address and device information
+   • If user didn't request: Option to cancel immediately
+
+4. HELP DESK SECURITY
+   Training:
+   • Mandatory social engineering awareness training (quarterly)
+   • Real social engineering simulations
+   • Consequences for being social engineered (learning opportunity, not punishment)
+   • Role-playing exercises
+   
+   Processes:
+   • Never reset passwords based on phone request alone
+   • Script requirement: "I need to verify your identity before resetting"
+   • Mandatory use of verification system (not ad-hoc decisions)
+   • Call-back to verified phone number after reset
+   • Audit log: Who reset whose password? When? Reason?
+   
+   Monitoring:
+   • Manager review of all password resets (weekly)
+   • Alert on unusual patterns (same person resetting 10 accounts)
+   • Alert on resets during unusual hours
+   • Escalation to security team
+
+5. OSINT & SOCIAL MEDIA AWARENESS
+   Training:
+   • "Think like an attacker" session
+   • Show employees how their social media can be used
+   • Provide guidelines for safe social media use
+   • Don't post: Pet names, children names, personal details
+   
+   Organizational:
+   • Maintain "sensitive information" list (family details, etc.)
+   • Employees aware this information is sensitive
+   • Social media monitoring for employees (with consent)
+
+6. ACCOUNT RECOVERY ALTERNATIVES
+   For employees who frequently forget passwords:
+   • Password manager (1Password, Bitwarden, LastPass)
+   • Company provides and manages password manager
+   • Reduces help desk burden
+   • Stronger passwords because users don't need to memorize
+   
+   For high-value accounts (executives, security team):
+   • Hardware security keys (REQUIRED, not optional)
+   • Backup security keys kept in secure safe
+   • Regular key replacement
+   • No password reset possible - only hardware key access
+
+7. INCIDENT RESPONSE
+   If account recovered through social engineering:
+   • Immediate session termination for that account
+   • MFA reset (regenerate authenticator secrets)
+   • Force password change
+   • Audit all actions taken with that account
+   • Incident investigation:
+     - How did social engineering succeed?
+     - Did attacker access classified documents?
+     - Notify affected parties
+     - Retrain help desk
+     - Consider law enforcement notification
+
+Result: This case study would have been prevented at multiple points:
+- MFA would have blocked attacker after password reset (no second factor)
+- Better security questions wouldn't be answerable from social media
+- In-person verification would have revealed attacker isn't employee
+- Help desk training would have caught social engineering tactics
+- Verification callback would have caught the reset request`
+      },
+      {
+        question: "Why are password hints a liability in a high-security environment?",
+        options: [
+          "They often rely on publicly available personal information that attackers can find",
+          "They make passwords longer",
+          "They increase system performance",
+          "They encrypt the password hints"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Longer hints do not improve security.",
+          2: "Hints are not about performance.",
+          3: "This is unrelated to the liability."
+        },
+        hint: "Sensitive hints can often be guessed from social media.",
+        explanationBefore: "Security questions should be based on information that is hard to discover."
+      },
+      {
+        question: "What is the strongest way to verify help desk reset requests?",
+        options: [
+          "Use multi-step out-of-band verification, such as a callback to a pre-registered phone number and ID confirmation",
+          "Accept the request if the caller knows colleague names",
+          "Reset passwords immediately to keep users happy",
+          "Ask for the user's favorite movie"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Colleague names can be socially engineered.",
+          2: "Speed alone does not ensure security.",
+          3: "Favorite movies are not secure verification."
+        },
+        hint: "Out-of-band checks use a separate channel from the request. ",
+        explanationBefore: "Strong verification prevents attackers from abusing help desk trust."
+      },
+      {
+        question: "Why might daily password changes worsen security?",
+        options: [
+          "They encourage weaker, reused, or written-down passwords",
+          "They automatically strengthen passwords",
+          "They eliminate the need for MFA",
+          "They are only a problem for administrators"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Forced frequent changes often lead to poor practices.",
+          2: "Frequent changes do not guarantee strength.",
+          3: "MFA is still valuable."
+        },
+        hint: "Usability pressure can create new insecurity. ",
+        explanationBefore: "Security policies should not make users adopt insecure workarounds."
+      },
+      {
+        question: "What is the best user behavior control to counter OSINT-based attacks?",
+        options: [
+          "Employee training on what not to share publicly and how attackers use social media",
+          "Blocking all social media sites on company networks",
+          "Forbidding employees from using personal email",
+          "Sharing more personal information as decoys"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Blocking sites does not stop public data already posted.",
+          2: "Personal email use is not the main issue here.",
+          3: "Decoy sharing is not a sound security practice."
+        },
+        hint: "OSINT risk is reduced when employees understand what information is sensitive. ",
+        explanationBefore: "Human awareness complements technical controls."
+      },
+      {
+        question: "Open-ended: Create a secure account recovery process for a government contractor.",
+        options: [
+          "Use multi-factor identity verification, registered contact methods, human review, and limited reset windows",
+          "Allow any password reset requested by email",
+          "Use only security questions based on social media",
+          "Disable account recovery entirely"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Email alone is not secure enough.",
+          2: "Social media questions are easily researched.",
+          3: "No recovery may hurt users and operations."
+        },
+        hint: "Account recovery should not rely on the compromised channel. ",
+        explanationBefore: "High-security recovery requires strong verification. ",
+        isOpenEnded: true,
+        answer: `1. Require a secondary channel, such as a pre-registered phone number or hardware token.
+2. Include a callback to a verified contact method.
+3. Use in-person or video verification for classified accounts.
+4. Only allow temporary access tokens with tight expiration.
+5. Log and audit every recovery event.`
+      },
+      {
+        question: "Open-ended: Explain why social engineering is often the weakest link in security.",
+        options: [
+          "Because attackers can manipulate trusted humans even when controls are present",
+          "Because technical controls are always perfect",
+          "Because social engineering only works on inexperienced people",
+          "Because it is easy to stop with passwords"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "No control is perfect, and human trust is exploitable.",
+          2: "Technical controls have limitations.",
+          3: "Social engineering can work on anyone if executed well.",
+          4: "Passwords do not prevent social manipulation."
+        },
+        hint: "Attackers often target the people using the systems. ",
+        explanationBefore: "Human behavior is part of the attack surface. ",
+        isOpenEnded: true,
+        answer: `Attackers exploit trust, authority, and urgent requests to bypass security. Even strong passwords and systems can be defeated if an employee is convinced to reset an account or share credentials. That is why training, verification, and process discipline are essential.`
+      },
+      {
+        question: "Open-ended: Propose employee training topics to reduce OSINT risk.",
+        options: [
+          "What personal details not to share online, how attackers use LinkedIn and social media, and how to recognize help desk scams",
+          "How to write longer passwords",
+          "How to install antivirus",
+          "How to use company email more quickly"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Password length is useful but not an OSINT topic.",
+          2: "Antivirus is technical, not about OSINT.",
+          3: "Email speed is irrelevant."
+        },
+        hint: "Training should focus on public information and social engineering tactics. ",
+        explanationBefore: "Employees need to understand how what they post can be used against them. ",
+        isOpenEnded: true,
+        answer: `1. Teach employees not to post pet names, birthdays, anniversaries, or family details publicly.
+2. Show examples of how attackers collect information from social media.
+3. Train on verifying help desk and reset requests.
+4. Encourage regular review of personal profiles for sensitive information.`
+      },
+      {
+        question: "Open-ended: Describe how to integrate MFA into classified project access.",
+        options: [
+          "Require MFA for all privileged and remote access, use hardware keys for classified accounts, and ensure fallback recovery is secure",
+          "Only require MFA for email access",
+          "Use MFA only when convenient",
+          "Replace passwords entirely with MFA"
+        ],
+        correct: 0,
+        wrongExplanations: {
+          1: "Email-only MFA is too narrow.",
+          2: "Convenience alone is not enough.",
+          3: "Passwords still play a role during enrollment and recovery."
+        },
+        hint: "MFA should cover the highest risk accounts with strong factors. ",
+        explanationBefore: "Classified access deserves stronger authentication than standard user accounts. ",
+        isOpenEnded: true,
+        answer: `1. Enforce MFA for all users with access to classified projects.
+2. Use hardware security keys or authenticator apps for high-risk accounts.
+3. Require MFA for password resets and remote access.
+4. Provide secure fallback options and monitor MFA failures.
+5. Regularly review and update authentication policies.`
+      },
+]
   }
 ];

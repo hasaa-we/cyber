@@ -184,19 +184,56 @@
     </div>
     <div id="cs-q-score">0 pts</div>
   </header>
-  <div class="question-container">
-    <div class="question-card" id="cs-question-card">
-      <div class="q-meta">
-        <span class="q-badge" id="cs-q-case-badge">Case Study 1</span>
-        <span class="q-level-badge" id="cs-q-num-badge">Question 1</span>
+  <div class="cs-question-layout">
+    <!-- Left Column: Case Study Context -->
+    <div class="cs-context-panel">
+      <div class="cs-context-content">
+        <h3 class="cs-context-title" id="cs-context-title">📋 Case Context</h3>
+        <div class="cs-scenario-box" id="cs-scenario-box"></div>
+        <div class="cs-incidents-box" id="cs-incidents-box"></div>
       </div>
-      <p class="question-text" id="cs-question-text"></p>
-      <div class="options-grid" id="cs-options-grid"></div>
-      <div class="feedback-bar" id="cs-feedback-bar" style="display:none"></div>
-      <div class="wrong-reason" id="cs-wrong-reason" style="display:none"></div>
-      <div class="q-footer">
-        <button class="btn-hint" id="cs-btn-hint" onclick="showCaseStudyHint()">💡 Hint</button>
-        <button class="btn-next" id="cs-btn-next" onclick="nextCaseStudyQuestion()" style="display:none">Next →</button>
+    </div>
+    
+    <!-- Right Column: Question -->
+    <div class="cs-question-panel">
+      <div class="question-card" id="cs-question-card">
+        <div class="q-meta">
+          <span class="q-badge" id="cs-q-case-badge">Case Study 1</span>
+          <span class="q-level-badge" id="cs-q-num-badge">Question 1</span>
+        </div>
+        <p class="question-text" id="cs-question-text"></p>
+        
+        <!-- Multiple Choice Questions -->
+        <div id="cs-mcq-container" style="display:none">
+          <div class="options-grid" id="cs-options-grid"></div>
+          <div class="feedback-bar" id="cs-feedback-bar" style="display:none"></div>
+          <div class="wrong-reason" id="cs-wrong-reason" style="display:none"></div>
+        </div>
+        
+        <!-- Open-Ended Questions -->
+        <div id="cs-open-container" style="display:none">
+          <div class="open-question-box">
+            <textarea 
+              id="cs-user-answer" 
+              class="open-answer-input"
+              placeholder="Write your answer here... (Consider the case study context to the left)"
+              rows="6"
+            ></textarea>
+            <button class="btn-primary" id="cs-btn-show-answer" onclick="showOpenAnswer()">
+              <span>Show Answer</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <div class="open-answer-display" id="cs-answer-display" style="display:none">
+            <h4>✓ Expected Answer:</h4>
+            <div class="answer-content" id="cs-answer-content"></div>
+          </div>
+        </div>
+        
+        <div class="q-footer">
+          <button class="btn-hint" id="cs-btn-hint" onclick="showCaseStudyHint()" style="display:none">💡 Hint</button>
+          <button class="btn-next" id="cs-btn-next" onclick="nextCaseStudyQuestion()" style="display:none">Next →</button>
+        </div>
       </div>
     </div>
   </div>
@@ -223,4 +260,3 @@
 <script src="game.js"></script>
 <script src="case-studies-game.js"></script>
 </body>
-</html>

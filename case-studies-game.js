@@ -124,23 +124,95 @@ function showCaseStudyQuestion() {
   const progressFill = document.getElementById('cs-q-progress-bar');
   progressFill.style.width = ((currentCaseQuestion + 1) / questions.length) * 100 + '%';
   
+  // Display case study context on left panel
+  displayCaseStudyContext();
+  
   document.getElementById('cs-question-text').textContent = q.question;
   
-  const optionsGrid = document.getElementById('cs-options-grid');
-  optionsGrid.innerHTML = '';
+  // Check if this is an open-ended question
+  const isOpenEnded = q.isOpenEnded || q.question.toLowerCase().includes('open-ended') || q.question.toLowerCase().includes('identify') || q.question.toLowerCase().includes('reconstruct') || q.question.toLowerCase().includes('explain') || q.question.toLowerCase().includes('describe');
   
-  q.options.forEach((option, idx) => {
-    const btn = document.createElement('button');
-    btn.className = 'option-btn';
-    btn.textContent = option;
-    btn.onclick = () => selectCaseStudyAnswer(idx, q.correct);
-    optionsGrid.appendChild(btn);
-  });
+  if (isOpenEnded) {
+    // Show open-ended question UI
+    document.getElementById('cs-mcq-container').style.display = 'none';
+    document.getElementById('cs-open-container').style.display = 'block';
+    document.getElementById('cs-btn-hint').style.display = 'none';
+    document.getElementById('cs-user-answer').value = '';
+    document.getElementById('cs-answer-display').style.display = 'none';
+    document.getElementById('cs-answer-content').innerHTML = '';
+    
+    // Store the expected answer for this question
+    currentQuestionAnswer = q.answer || q.options[q.correct];
+  } else {
+    // Show multiple choice UI
+    document.getElementById('cs-open-container').style.display = 'none';
+    document.getElementById('cs-mcq-container').style.display = 'block';
+    
+    const optionsGrid = document.getElementById('cs-options-grid');
+    optionsGrid.innerHTML = '';
+    
+    q.options.forEach((option, idx) => {
+      const btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.textContent = option;
+      btn.onclick = () => selectCaseStudyAnswer(idx, q.correct);
+      optionsGrid.appendChild(btn);
+    });
+    
+    document.getElementById('cs-btn-hint').style.display = 'block';
+    document.getElementById('cs-feedback-bar').style.display = 'none';
+    document.getElementById('cs-wrong-reason').style.display = 'none';
+  }
   
-  document.getElementById('cs-btn-hint').style.display = 'block';
   document.getElementById('cs-btn-next').style.display = 'none';
-  document.getElementById('cs-feedback-bar').style.display = 'none';
-  document.getElementById('cs-wrong-reason').style.display = 'none';
+}
+
+function displayCaseStudyContext() {
+  const scenario = currentCaseStudy.scenario;
+  const incidents = currentCaseStudy.incidents;
+  
+  const scenarioBox = document.getElementById('cs-scenario-box');
+  scenarioBox.innerHTML = `
+    <div class="cs-context-section">
+      <h4>📋 Scenario</h4>
+      <p>${scenario}</p>
+    </div>
+  `;
+  
+  const incidentsBox = document.getElementById('cs-incidents-box');
+  incidentsBox.innerHTML = `
+    <div class="cs-context-section">
+      <h4>⚠️ Timeline</h4>
+      <ol class="cs-incidents-timeline">
+        ${incidents.map(incident => `<li>${incident}</li>`).join('')}
+      </ol>
+    </div>
+  `;
+}
+
+let currentQuestionAnswer = '';
+
+function showOpenAnswer() {
+  const q = currentCaseStudy.questions[currentCaseQuestion];
+  const answerDisplay = document.getElementById('cs-answer-display');
+  const answerContent = document.getElementById('cs-answer-content');
+  
+  // Use the answer field or the correct option
+  let answer = q.answer || q.options[q.correct];
+  
+  // If answer is an array, format it as a list
+  if (Array.isArray(answer)) {
+    answer = `<ul>${answer.map(item => `<li>${item}</li>`).join('')}</ul>`;
+  } else if (typeof answer === 'object') {
+    // If it's an object, format it nicely
+    answer = Object.values(answer).join('<br><br>');
+  }
+  
+  answerContent.innerHTML = answer;
+  answerDisplay.style.display = 'block';
+  
+  // Show next button
+  document.getElementById('cs-btn-next').style.display = 'block';
 }
 
 function selectCaseStudyAnswer(selected, correct) {
